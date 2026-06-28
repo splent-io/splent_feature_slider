@@ -1,0 +1,183 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   block-slider — full-width homepage carousel.
+   Token-driven: every colour/radius comes from the theme's --brand-* custom
+   properties, so a skin restyles it for free. Loaded via the layout.head hook
+   on top of the theme's public.css.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.block-slider {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 6;
+    overflow: hidden;
+    background: var(--brand-surface, #0b1120);
+    isolation: isolate;
+}
+
+/* ── Slides (absolutely stacked, cross-faded) ──────────────────────────────── */
+.block-slider__track {
+    position: absolute;
+    inset: 0;
+}
+
+.block-slider__slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .6s ease;
+    z-index: 1;
+}
+
+.block-slider__slide.is-active {
+    opacity: 1;
+    visibility: visible;
+    z-index: 2;
+}
+
+.block-slider__media {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.block-slider__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* ── Caption overlay with a subtle gradient scrim ──────────────────────────── */
+.block-slider__caption {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: .5rem;
+    padding: clamp(1.25rem, 4vw, 3rem);
+    color: var(--brand-primary-contrast, #ffffff);
+    background: linear-gradient(
+        180deg,
+        transparent 35%,
+        color-mix(in srgb, var(--brand-heading, #0b1120) 78%, transparent) 100%
+    );
+    pointer-events: none;
+}
+
+.block-slider__title {
+    margin: 0;
+    font-family: var(--brand-font-display, var(--brand-font-heading, inherit));
+    font-size: clamp(1.4rem, 3.5vw, 2.75rem);
+    line-height: 1.1;
+    color: var(--brand-primary-contrast, #ffffff);
+    text-shadow: 0 2px 12px rgba(0, 0, 0, .45);
+}
+
+.block-slider__text {
+    margin: 0;
+    max-width: 48ch;
+    font-size: clamp(.95rem, 1.6vw, 1.15rem);
+    color: color-mix(in srgb, var(--brand-primary-contrast, #ffffff) 88%, transparent);
+    text-shadow: 0 1px 8px rgba(0, 0, 0, .4);
+}
+
+/* ── Prev / next arrow buttons ─────────────────────────────────────────────── */
+.block-slider__arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--brand-heading, #111827);
+    background: color-mix(in srgb, var(--brand-bg, #ffffff) 85%, transparent);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, .25);
+    transition: background .15s ease, transform .15s ease;
+}
+
+.block-slider__arrow:hover {
+    background: var(--brand-bg, #ffffff);
+    color: var(--brand-primary, #2563eb);
+}
+
+.block-slider__arrow:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--brand-primary, #2563eb) 60%, transparent);
+    outline-offset: 2px;
+}
+
+.block-slider__arrow svg {
+    width: 22px;
+    height: 22px;
+}
+
+.block-slider__arrow--prev { left: clamp(.5rem, 2vw, 1.25rem); }
+.block-slider__arrow--next { right: clamp(.5rem, 2vw, 1.25rem); }
+
+/* ── Dot indicators ────────────────────────────────────────────────────────── */
+.block-slider__dots {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: clamp(.6rem, 2vw, 1.1rem);
+    z-index: 3;
+    display: flex;
+    justify-content: center;
+    gap: .5rem;
+}
+
+.block-slider__dot {
+    width: 10px;
+    height: 10px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    background: color-mix(in srgb, var(--brand-primary-contrast, #ffffff) 55%, transparent);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .4);
+    transition: background .15s ease, transform .15s ease;
+}
+
+.block-slider__dot:hover {
+    background: var(--brand-primary-contrast, #ffffff);
+}
+
+.block-slider__dot.is-active {
+    background: var(--brand-primary, #2563eb);
+    transform: scale(1.25);
+}
+
+.block-slider__dot:focus-visible {
+    outline: 2px solid var(--brand-primary-contrast, #ffffff);
+    outline-offset: 2px;
+}
+
+/* ── Responsive: taller, comfier crop on small screens ─────────────────────── */
+@media (max-width: 768px) {
+    .block-slider {
+        aspect-ratio: 4 / 5;
+    }
+    .block-slider__caption {
+        justify-content: flex-end;
+        text-align: left;
+    }
+}
+
+/* ── Respect reduced-motion preferences ────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    .block-slider__slide {
+        transition: none;
+    }
+    .block-slider__dot,
+    .block-slider__arrow {
+        transition: none;
+    }
+}

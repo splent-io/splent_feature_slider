@@ -1,0 +1,79 @@
+{% extends "base_template.html" %}
+
+{% block title %}Slider{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-0">Slider</h1>
+        <p class="text-muted mb-0">Slides shown in the homepage carousel.</p>
+    </div>
+    <a href="{{ url_for('slider.admin_new') }}" class="btn btn-primary">+ New slide</a>
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+        <div class="alert alert-{{ 'danger' if category == 'danger' else 'success' }} py-2">{{ message }}</div>
+    {% endfor %}
+{% endwith %}
+
+<div class="card">
+    {% if slides %}
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th style="width:90px">Image</th>
+                    <th>Title</th>
+                    <th style="width:110px">Status</th>
+                    <th style="width:80px" class="text-end">Order</th>
+                    <th style="width:160px" class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for slide in slides %}
+                <tr>
+                    <td>
+                        {% if slide.image_url %}
+                        <img src="{{ slide.image_url }}" alt="{{ slide.title }}"
+                             style="width:72px;height:44px;border-radius:6px;object-fit:cover">
+                        {% else %}
+                        <span class="d-inline-flex align-items-center justify-content-center bg-light text-muted"
+                              style="width:72px;height:44px;border-radius:6px">
+                            <i class="align-middle" data-feather="image"></i>
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <strong>{{ slide.title or '(untitled)' }}</strong>
+                        {% if slide.caption %}<div class="text-muted small">{{ slide.caption }}</div>{% endif %}
+                        {% if slide.link %}<div class="text-muted small"><i class="align-middle" data-feather="link"></i> {{ slide.link }}</div>{% endif %}
+                    </td>
+                    <td>
+                        {% if slide.active %}
+                        <span class="badge bg-success">Active</span>
+                        {% else %}
+                        <span class="badge bg-secondary">Hidden</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">{{ slide.order }}</td>
+                    <td class="text-end">
+                        <a href="{{ url_for('slider.admin_edit', slide_id=slide.id) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+                        <form method="POST" action="{{ url_for('slider.admin_delete', slide_id=slide.id) }}" class="d-inline"
+                              onsubmit="return confirm('Delete this slide?')">
+                            <button class="btn btn-sm btn-outline-danger" type="submit" title="Delete">✕</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="card-body text-center text-muted py-5">
+        <p class="mb-3">No slides yet.</p>
+        <a href="{{ url_for('slider.admin_new') }}" class="btn btn-primary">+ Create the first slide</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
