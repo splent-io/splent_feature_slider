@@ -4,7 +4,7 @@
 {% block title %}{{ 'Edit slide' if slide else 'New slide' }}{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="d-flex flex-column align-items-start gap-2 mb-4">
     <h1 class="h3 mb-0">{{ 'Edit slide' if slide else 'New slide' }}</h1>
     <a href="{{ url_for('slider.admin_index') }}" class="btn btn-outline-secondary">← Back to slider</a>
 </div>
