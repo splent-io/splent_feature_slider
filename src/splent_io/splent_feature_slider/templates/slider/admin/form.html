@@ -1,4 +1,5 @@
 {% extends "base_template.html" %}
+{% from "media/_picker.html" import media_picker %}
 
 {% block title %}{{ 'Edit slide' if slide else 'New slide' }}{% endblock %}
 
@@ -47,26 +48,7 @@
             <div class="col-12">
                 <label class="form-label">Image</label>
                 <p class="text-muted small mb-2">Pick an image from the media library.</p>
-                <div class="slider-picker">
-                    <label class="slider-picker__item slider-picker__item--none">
-                        <input type="radio" name="media_id" value=""
-                               {{ 'checked' if not slide or not slide.media_id else '' }}>
-                        <span class="slider-picker__none">
-                            <i class="align-middle" data-feather="slash"></i>
-                            <span>No image</span>
-                        </span>
-                    </label>
-                    {% for m in media %}
-                    <label class="slider-picker__item">
-                        <input type="radio" name="media_id" value="{{ m.id }}"
-                               {{ 'checked' if slide and slide.media_id == m.id else '' }}>
-                        <img src="{{ m.url }}" alt="{{ m.alt or m.title }}">
-                    </label>
-                    {% endfor %}
-                </div>
-                {% if not media %}
-                <div class="form-text">No images in the media library yet.</div>
-                {% endif %}
+                {{ media_picker("media_id", slide.media_id if slide else None, media) }}
             </div>
         </div>
     </div>
@@ -75,53 +57,4 @@
         <button class="btn btn-primary" type="submit">Save slide</button>
     </div>
 </form>
-
-<style>
-    .slider-picker {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-        gap: .75rem;
-    }
-    .slider-picker__item {
-        position: relative;
-        margin: 0;
-        cursor: pointer;
-        border: 2px solid #e5e7eb;
-        border-radius: 8px;
-        overflow: hidden;
-        aspect-ratio: 16 / 10;
-        display: block;
-        background: #f8f9fa;
-        transition: border-color .15s ease, box-shadow .15s ease;
-    }
-    .slider-picker__item input {
-        position: absolute;
-        inset: 0;
-        opacity: 0;
-        margin: 0;
-        cursor: pointer;
-    }
-    .slider-picker__item img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-    }
-    .slider-picker__none {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: .25rem;
-        color: #6b7280;
-        font-size: .8rem;
-    }
-    /* :checked highlight — the input is the first child, the visual is its sibling */
-    .slider-picker__item:has(input:checked) {
-        border-color: #0d6efd;
-        box-shadow: 0 0 0 3px rgba(13, 110, 253, .25);
-    }
-</style>
 {% endblock %}
