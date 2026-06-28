@@ -52,9 +52,7 @@ def slider_hero():
         return ""
     if not slides:
         return ""
-    return Markup(
-        render_template("slider/carousel.html", slides=slides, cfg=cfg)
-    )
+    return Markup(render_template("slider/carousel.html", slides=slides, cfg=cfg))
 
 
 register_template_hook("layout.authenticated_sidebar", slider_admin_link)

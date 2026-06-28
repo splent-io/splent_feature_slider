@@ -23,9 +23,7 @@ def upgrade():
         sa.Column("link", sa.String(length=512), nullable=True),
         sa.Column("order", sa.Integer(), nullable=True),
         sa.Column("active", sa.Boolean(), nullable=True),
-        sa.ForeignKeyConstraint(
-            ["media_id"], ["media_item.id"], ondelete="SET NULL"
-        ),
+        sa.ForeignKeyConstraint(["media_id"], ["media_item.id"], ondelete="SET NULL"),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(op.f("ix_slide_media_id"), "slide", ["media_id"])

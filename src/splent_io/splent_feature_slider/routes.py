@@ -41,7 +41,9 @@ def _safe_link(href):
     since the link is rendered into a public <a href> for every visitor."""
     href = (href or "").strip()
     low = href.lower()
-    if low.startswith(("http://", "https://", "mailto:")) or href.startswith(("/", "#")):
+    if low.startswith(("http://", "https://", "mailto:")) or href.startswith(
+        ("/", "#")
+    ):
         return href
     return ""
 
@@ -90,9 +92,7 @@ def admin_new():
         _slider_service().create(**data)
         flash("Slide created.", "success")
         return redirect(url_for("slider.admin_index"))
-    return render_template(
-        "slider/admin/form.html", slide=None, media=_media_for(None)
-    )
+    return render_template("slider/admin/form.html", slide=None, media=_media_for(None))
 
 
 @slider_bp.route("/admin/slider/<int:slide_id>/edit", methods=["GET", "POST"])
