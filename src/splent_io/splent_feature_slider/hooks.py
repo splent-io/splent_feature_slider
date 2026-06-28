@@ -1,12 +1,13 @@
 """Template hooks for splent_feature_slider.
 
-Three slots:
-
 * ``layout.authenticated_sidebar`` — admin sidebar link to the slide manager.
-* ``layout.head`` — the carousel stylesheet (served via the blueprint asset
-  route, same pattern as the skins).
-* ``layout.hero`` — renders the public carousel above the page content. The
-  carousel template is self-contained (markup + its own init script).
+* ``layout.hero`` — renders the public carousel above the page content.
+
+The carousel's CSS and JS are NOT injected here: they are declared through the
+asset registry (in __init__.init_feature) so the shell loads them in a
+deduplicated, deterministic order — same pattern as the skins. The carousel
+markup is config-driven (overlay / autoplay / interval / caption colour) via the
+admin-editable settings read by config_store.get_config().
 """
 
 from flask import render_template, request, url_for
@@ -33,26 +34,28 @@ def slider_admin_link():
     )
 
 
-def slider_styles():
-    """Inject the carousel stylesheet into the public shell's head."""
-    return (
-        '<link rel="stylesheet" href="'
-        + url_for("slider.assets", subfolder="css", filename="slider.css")
-        + '">'
-    )
-
-
 def slider_hero():
-    """Render the carousel into the full-width hero slot above the content."""
+    """Render the carousel into the full-width hero slot above the content.
+
+    Scope-aware: by default (scope="home") it renders only on the homepage;
+    "all" renders it on every public page. Behaviour comes from the framework's
+    declarative settings schema (get_config) — no per-feature config module.
+    """
+    from splent_framework.settings.settings_schema import get_config
+
+    cfg = get_config("slider")
+    if cfg.get("scope", "home") == "home" and request.endpoint != "public.index":
+        return ""
     try:
         slides = service_proxy("SliderService").active_slides()
     except Exception:
         return ""
     if not slides:
         return ""
-    return Markup(render_template("slider/carousel.html", slides=slides))
+    return Markup(
+        render_template("slider/carousel.html", slides=slides, cfg=cfg)
+    )
 
 
 register_template_hook("layout.authenticated_sidebar", slider_admin_link)
-register_template_hook("layout.head", slider_styles)
 register_template_hook("layout.hero", slider_hero)

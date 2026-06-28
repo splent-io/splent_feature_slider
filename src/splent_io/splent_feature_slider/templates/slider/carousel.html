@@ -1,5 +1,9 @@
 {% if slides %}
-<section class="block block-slider" aria-roledescription="carousel" aria-label="Highlights">
+<section class="block block-slider{% if cfg.overlay %} block-slider--overlay{% endif %}"
+         style="--slider-caption-color: {{ cfg.caption_color }};"
+         data-autoplay="{{ '1' if cfg.autoplay else '0' }}"
+         data-interval="{{ cfg.interval }}"
+         aria-roledescription="carousel" aria-label="Highlights">
     <div class="block-slider__track">
         {% for slide in slides %}
         <div class="block-slider__slide{% if loop.first %} is-active{% endif %}"
@@ -52,80 +56,4 @@
     </div>
     {% endif %}
 </section>
-
-<script>
-(function () {
-    function initSlider(root) {
-        if (root.dataset.sliderInit) return;
-        root.dataset.sliderInit = "1";
-
-        var slides = Array.prototype.slice.call(
-            root.querySelectorAll(".block-slider__slide")
-        );
-        if (slides.length < 2) return;
-
-        var dots = Array.prototype.slice.call(
-            root.querySelectorAll("[data-slider-dot]")
-        );
-        var index = 0;
-        var timer = null;
-        var DELAY = 6000;
-
-        function show(next) {
-            next = (next + slides.length) % slides.length;
-            slides.forEach(function (s, i) {
-                var active = i === next;
-                s.classList.toggle("is-active", active);
-                s.setAttribute("aria-hidden", active ? "false" : "true");
-            });
-            dots.forEach(function (d, i) {
-                var active = i === next;
-                d.classList.toggle("is-active", active);
-                d.setAttribute("aria-selected", active ? "true" : "false");
-            });
-            index = next;
-        }
-
-        function next() { show(index + 1); }
-        function prev() { show(index - 1); }
-
-        function start() {
-            stop();
-            timer = window.setInterval(next, DELAY);
-        }
-        function stop() {
-            if (timer) { window.clearInterval(timer); timer = null; }
-        }
-
-        var prevBtn = root.querySelector("[data-slider-prev]");
-        var nextBtn = root.querySelector("[data-slider-next]");
-        if (prevBtn) prevBtn.addEventListener("click", function () { prev(); start(); });
-        if (nextBtn) nextBtn.addEventListener("click", function () { next(); start(); });
-
-        dots.forEach(function (d) {
-            d.addEventListener("click", function () {
-                show(parseInt(d.getAttribute("data-slider-dot"), 10));
-                start();
-            });
-        });
-
-        root.addEventListener("mouseenter", stop);
-        root.addEventListener("mouseleave", start);
-        root.addEventListener("focusin", stop);
-        root.addEventListener("focusout", start);
-
-        start();
-    }
-
-    function initAll() {
-        document.querySelectorAll(".block-slider").forEach(initSlider);
-    }
-
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", initAll);
-    } else {
-        initAll();
-    }
-})();
-</script>
 {% endif %}

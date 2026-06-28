@@ -48,7 +48,10 @@
     display: block;
 }
 
-/* ── Caption overlay with a subtle gradient scrim ──────────────────────────── */
+/* ── Caption overlay ───────────────────────────────────────────────────────
+   The caption colour is admin-configurable (--slider-caption-color, default
+   white). The bottom-half shade is toggled by the admin "overlay" setting via
+   the .block-slider--overlay class, so white text stays legible over photos. */
 .block-slider__caption {
     position: absolute;
     inset: 0;
@@ -57,30 +60,37 @@
     justify-content: flex-end;
     gap: .5rem;
     padding: clamp(1.25rem, 4vw, 3rem);
-    color: var(--brand-primary-contrast, #ffffff);
-    background: linear-gradient(
-        180deg,
-        transparent 35%,
-        color-mix(in srgb, var(--brand-heading, #0b1120) 78%, transparent) 100%
-    );
+    color: var(--slider-caption-color, #ffffff);
     pointer-events: none;
 }
 
-.block-slider__title {
+/* Shade from the middle down so the description (white) reads on any image. */
+.block-slider--overlay .block-slider__caption {
+    background: linear-gradient(
+        180deg,
+        transparent 42%,
+        rgba(0, 0, 0, .45) 68%,
+        rgba(0, 0, 0, .88) 100%
+    );
+}
+
+/* Scope the caption colour under .block-slider so a skin's generic
+   `body.cms-public h2 { color: … }` can't override the configured white. */
+.block-slider .block-slider__title {
     margin: 0;
     font-family: var(--brand-font-display, var(--brand-font-heading, inherit));
     font-size: clamp(1.4rem, 3.5vw, 2.75rem);
     line-height: 1.1;
-    color: var(--brand-primary-contrast, #ffffff);
-    text-shadow: 0 2px 12px rgba(0, 0, 0, .45);
+    color: var(--slider-caption-color, #ffffff);
+    text-shadow: 0 2px 14px rgba(0, 0, 0, .6);
 }
 
-.block-slider__text {
+.block-slider .block-slider__text {
     margin: 0;
     max-width: 48ch;
     font-size: clamp(.95rem, 1.6vw, 1.15rem);
-    color: color-mix(in srgb, var(--brand-primary-contrast, #ffffff) 88%, transparent);
-    text-shadow: 0 1px 8px rgba(0, 0, 0, .4);
+    color: var(--slider-caption-color, #ffffff);
+    text-shadow: 0 1px 10px rgba(0, 0, 0, .6);
 }
 
 /* ── Prev / next arrow buttons ─────────────────────────────────────────────── */
